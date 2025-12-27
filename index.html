@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday Simi 🎂</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        height: 100vh;
+        background: linear-gradient(135deg, #ffd6e8, #fff0f7);
+        overflow: hidden;
+    }
+
+    .center {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+        padding: 20px;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.95);
+        border-radius: 24px;
+        padding: 42px;
+        max-width: 560px;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        display: none;
+        animation: fadeIn 2s ease forwards, float 6s ease-in-out infinite;
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes float {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0); }
+    }
+
+    h1 {
+        color: #e91e63;
+        font-size: 2.6rem;
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        color: #444;
+        font-weight: 500;
+        margin-bottom: 22px;
+    }
+
+    p {
+        color: #555;
+        line-height: 1.9;
+        font-size: 1.02rem;
+        margin-bottom: 14px;
+    }
+
+    .countdown-box {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.04); }
+        100% { transform: scale(1); }
+    }
+
+    .countdown-time {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #ad1457;
+        margin-top: 10px;
+    }
+
+    canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+</style>
+</head>
+
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="center">
+
+    <!-- COUNTDOWN -->
+    <div class="countdown-box" id="countdownBox">
+        <h1>Something happy is waiting 🌸</h1>
+        <div class="countdown-time" id="countdown"></div>
+    </div>
+
+    <!-- MESSAGE -->
+    <div class="card" id="messageCard">
+        <h1>Happy Birthday Simi 🎉</h1>
+        <h2>Today is all about you</h2>
+
+        <div id="typedText"></div>
+    </div>
+
+</div>
+
+<!-- Background Music (Hidden) -->
+<iframe id="bgMusic"
+src="https://www.youtube.com/embed/0OZy6Yc9PpA?autoplay=1&mute=1&loop=1&playlist=0OZy6Yc9PpA"
+allow="autoplay"
+style="display:none"></iframe>
+
+<script>
+/* 🎂 CHANGE YEAR IF NEEDED */
+const birthday = new Date("December 27, 2025 13:20:00").getTime();
+
+/* 💌 MERRIER MESSAGE */
+const message = [
+"Happy Birthday, Simi 🌷",
+"I hope today wraps you in the same warmth you give so effortlessly to others.",
+"You have this beautiful way of making people feel heard, safe, and understood — and I hope life returns that kindness to you, tenfold.",
+"May this year bring you light days, soft moments, and reasons to smile without trying.",
+"May you always feel supported, valued, and deeply loved — just for being who you are.",
+"Thank you for your patience, your calm, and the quiet strength you carry.",
+"Thank you for letting things take their own time, for trusting emotions, and for choosing gentleness every time.",
+"I wish you happiness that feels steady, peace that feels like home, and dreams that unfold beautifully, at their own pace.",
+"Never stop being this warm, thoughtful soul.",
+"Happy Birthday once again — may this year be kind to you 🤍"
+];
+
+/* ⏳ COUNTDOWN */
+const countdownEl = document.getElementById("countdown");
+const countdownBox = document.getElementById("countdownBox");
+const card = document.getElementById("messageCard");
+const typedText = document.getElementById("typedText");
+const music = document.getElementById("bgMusic");
+
+let revealed = false;
+
+setInterval(() => {
+    const now = new Date().getTime();
+    const diff = birthday - now;
+
+    if (diff <= 0 && !revealed) {
+        revealed = true;
+        countdownBox.style.display = "none";
+        card.style.display = "block";
+        burstConfetti();
+        startMusic();
+        typeMessage();
+        return;
+    }
+
+    if (diff > 0) {
+        const d = Math.floor(diff / (1000*60*60*24));
+        const h = Math.floor((diff / (1000*60*60)) % 24);
+        const m = Math.floor((diff / (1000*60)) % 60);
+        const s = Math.floor((diff / 1000) % 60);
+        countdownEl.innerHTML = `${d} days ${h} hrs ${m} mins ${s} secs`;
+    }
+}, 1000);
+
+/* ⌨️ TYPING EFFECT */
+let line = 0, char = 0;
+
+function typeMessage() {
+    if (line < message.length) {
+        if (char < message[line].length) {
+            typedText.innerHTML += message[line].charAt(char);
+            char++;
+            setTimeout(typeMessage, 35);
+        } else {
+            typedText.innerHTML += "<br><br>";
+            line++;
+            char = 0;
+            setTimeout(typeMessage, 500);
+        }
+    }
+}
+
+/* 🎶 MUSIC HANDLING */
+function startMusic() {
+    music.src = music.src.replace("mute=1", "mute=0");
+}
+document.body.addEventListener("click", startMusic, { once: true });
+
+/* 🎉 CONFETTI */
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const colors = ["#e53935", "#1e88e5", "#f9a825"];
+let confetti = [];
+
+function burstConfetti() {
+    for (let i = 0; i < 350; i++) {
+        confetti.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            r: Math.random() * 6 + 4,
+            d: Math.random() * 4 + 2,
+            color: colors[Math.floor(Math.random() * colors.length)]
+        });
+    }
+}
+
+function drawConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.fillStyle = c.color;
+        ctx.fill();
+        c.y += c.d;
+    });
+    confetti = confetti.filter(c => c.y < canvas.height + 20);
+}
+
+setInterval(drawConfetti, 20);
+</script>
+
+</body>
+</html>
